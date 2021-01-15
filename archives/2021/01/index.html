@@ -24,11 +24,13 @@
     if($(".article-toc").children().length < 2) {
         $(".article-toc").css("display", "none");
     };
+
+    //- 判断是什么浏览器，如果是chrome那么所有格式的歌曲都加入
     var agen = navigator.userAgent.toLowerCase()
     var str = 'chrome'
-    //- 判断是什么浏览器，如果是chrome那么所有格式的歌曲都加入
     if (agen.indexOf(str) !== -1) {
-      console.log('是chrome')
+      //- console.log('是chrome')
+      //- console.log(pa+'audio/selia.mp3')
       const ap = new APlayer({
       container: document.getElementById('aplayer'),
       mini: 'true',
@@ -40,20 +42,20 @@
       {
         name: 'name',
         artist: 'artist',
-        url: config.root + 'audio/selia.mp3',
-        cover: './images/svdb.png',
+        url: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/audio/selia.mp3',
+        cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
       },
       {
         name: 'name',
         artist: 'artist',
-        url: config.root + 'audio/miaosu.aac',
-        cover: './images/svdb.png',
+        url: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/audio/miaosu.aac',
+        cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
       },
       {
         name: 'name',
         artist: 'artist',
-        url: config.root + 'audio/selia01.m4a',
-        cover: './images/svdb.png',
+        url: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/audio/selia01.m4a',
+        cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
       }]
     }); 
     }
@@ -68,14 +70,14 @@
       {
         name: 'name',
         artist: 'artist',
-        url: config.root + 'audio/miaosu.aac',
-        cover: './images/svdb.png',
+        url: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/audio/miaosu.aac',
+        cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
       },
       {
         name: 'name',
         artist: 'artist',
-        url: config.root + 'audio/selia01.m4a',
-        cover: './images/svdb.png',
+        url: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/audio/selia01.m4a',
+        cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
       }]
     }); 
 });</script></body></html>
