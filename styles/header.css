@@ -11,10 +11,18 @@ header nav {
   position: relative;
   z-index: 2;
 }
-header img.logo {
-  width: 72px;
-  height: 72px;
+header #aplayer {
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
+  z-index: 3;
+  position: relative;
+  margin: auto;
+  display: inline-block;
+  background-color: rgba(0,0,0,0);
+}
+header #aplayer .aplayer-button {
+  display: none;
 }
 header a {
   color: $header-line-color;
