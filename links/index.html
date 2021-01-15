@@ -36,8 +36,12 @@
     if($(".article-toc").children().length < 2) {
         $(".article-toc").css("display", "none");
     };
-
-    const ap = new APlayer({
+    var agen = navigator.userAgent.toLowerCase()
+    var str = 'chrome'
+    //- 判断是什么浏览器，如果是chrome那么所有格式的歌曲都加入
+    if (agen.indexOf(str) !== -1) {
+      console.log('是chrome')
+      const ap = new APlayer({
       container: document.getElementById('aplayer'),
       mini: 'true',
       loop: 'all',
@@ -57,5 +61,21 @@
         url: './audio/selia01.m4a',
         cover: './images/svdb.png',
       }]
-    });  
+    }); 
+    }
+    const ap = new APlayer({
+      container: document.getElementById('aplayer'),
+      mini: 'true',
+      loop: 'all',
+      theme: 'none',
+      volume: 0.3,
+      //- 可以加入多首歌
+      audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: './audio/selia01.m4a',
+        cover: './images/svdb.png',
+      }]
+    }); 
 });</script></body></html>
