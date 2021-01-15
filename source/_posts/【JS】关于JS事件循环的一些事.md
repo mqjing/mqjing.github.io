@@ -2,7 +2,8 @@
 title: 【JS】关于JS事件循环的一些事
 ---
 
-事情是这样的，看到一个关于事件循环的题：(答案请见：[解题步骤](#回到本题))
+事情是这样的，看到一个关于事件循环的题,这道题的主要考察点是事件循环中函数执行顺序的问题，其中包括`async`、`await`、`setTimeout`、`promise`函数。(答案请见：[解题步骤](#回到本题))
+<!-- more -->
 ```javascript
 //请写出输出内容
 async function async1() {
@@ -30,7 +31,7 @@ new Promise(function(resolve) {
 });
 console.log('script end');
 ```
-这道题的主要考察点是事件循环中函数执行顺序的问题，其中包括`async`、`await`、`setTimeout`、`promise`函数。下面来剖析一下这道题涉及到的知识点：
+下面来剖析一下这道题涉及到的知识点：
 
 ---
 
