@@ -8,9 +8,10 @@ menu:
 disqus:
   short_name: mqjing
 icon:
-  rss: /atom.xml
-  facebook: YOUR_FACEBOOK_ID
-  twitter: YOUR_TWITTER_ID
+  rss: 
+  facebook: 
+  twitter: 
   github: mqjing
   weibo: YOUR_WEIBO_ID
+  wechat: WEchat
 favicon: /images/favicon.ico
