@@ -2,6 +2,7 @@ script(src='//cdn.bootcss.com/Han/3.3.0/han.min.js')
 script(src='//cdn.bootcss.com/jquery/3.1.1/jquery.min.js')
 script(src='//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js')
+script(src='https://cdn.jsdelivr.net/npm/pjax/pjax.js')
 link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css')
 script(src= config.root + 'scripts/highlight.pack.js')
 script.
@@ -9,16 +10,16 @@ script.
         //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
         $("header").backstretch("/images/header.jpg");
         //- 关于hightlight.js：https://highlightjs.org/
-        $("figure.highlight").each(function(i, block) {
-            $(block).removeClass("highlight");
-            $(block).find("td.gutter").remove();
-            $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
-            $(block).next().find("code").text((block.innerText || block.textContent));
-            $(block).remove();
-        });
-        $(".__tobehl").each(function(i, block) {
-            hljs.highlightBlock(block);
-        });
+        //- $("figure.highlight").each(function(i, block) {
+        //-     $(block).removeClass("highlight");
+        //-     $(block).find("td.gutter").remove();
+        //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+        //-     $(block).next().find("code").text((block.innerText || block.textContent));
+        //-     $(block).remove();
+        //- });
+        //- $(".__tobehl").each(function(i, block) {
+        //-     hljs.highlightBlock(block);
+        //- });
         $("article.full img").each(function() {
             if($(this).parent().is("article")) {
                 $(this).wrap("<p style='text-align: center;'></p>");
@@ -86,4 +87,24 @@ script.
             cover: 'https://myblog-1300068578.cos.ap-shanghai.myqcloud.com/images/svdb.png',
           }]
         }); 
+        //- 创建pjax对象
+        var pjax = new Pjax({
+          elements: "a",
+          selectors: [
+            "main",
+          ]
+        })
+        window.addEventListener('pjax:complete', function() {
+          //- console.log('加载完成')
+          $("figure.highlight").each(function(i, block) {
+            $(block).removeClass("highlight");
+            $(block).find("td.gutter").remove();
+            $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+            $(block).next().find("code").text((block.innerText || block.textContent));
+            $(block).remove();
+          });
+          $(".__tobehl").each(function(i, block) {
+            hljs.highlightBlock(block);
+          });
+        })
     });
