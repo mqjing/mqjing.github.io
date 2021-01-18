@@ -1,0 +1,86 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="通俗来讲：我们创建的每一个函数都有一个prototype属性，这个属性指向了一个对象，这个对象包含了一些共享的属性和方法，通过调用该构造函数所创建的对象会“继承”这些属性和方法。"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【JS】简单聊一下prototype · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><article class="full"><h1>【JS】简单聊一下prototype</h1><span class="post-meta">写于<time> 2020 年 06 月 10 日 19 时 37 分</time><br>更新于<time> 2021 年 01 月 18 日 15 时 42 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFprototype"><span class="toc-number">1.</span> <span class="toc-text">什么是prototype</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#prototype%E6%98%AF%E5%A6%82%E4%BD%95%E5%B7%A5%E4%BD%9C%E7%9A%84"><span class="toc-number">2.</span> <span class="toc-text">prototype是如何工作的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%F0%9F%8C%B0"><span class="toc-number">3.</span> <span class="toc-text">一个🌰</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E9%82%A3%E4%B9%88%C2%B7%E6%84%8F%E6%80%9D"><span class="toc-number">4.</span> <span class="toc-text">有那么·意思</span></a></li></ol></div><h2 id="什么是prototype"><a href="#什么是prototype" class="headerlink" title="什么是prototype"></a>什么是prototype</h2><p>通俗来讲：我们创建的每一个函数都有一个prototype属性，这个属性指向了一个对象，这个对象包含了一些共享的属性和方法，通过调用该构造函数所创建的对象会“继承”这些属性和方法。</p>
+<h2 id="prototype是如何工作的"><a href="#prototype是如何工作的" class="headerlink" title="prototype是如何工作的"></a>prototype是如何工作的</h2><p>JavaScript 是基于原型的语言。当我们调用一个对象的属性时，如果对象没有该属性，JavaScript 解释器就会从对象的原型对象上去找该属性，如果原型上也没有该属性，那就去找原型的原型，直到最后返回null为止，null没有原型。这种属性查找的方式被称为原型链（<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Inheritance_and_the_prototype_chain">prototype chain</a>）。</p>
+<p>原型对象的优点是：所有的对象实例都可以共享它包含的属性和方法。这一点可以在构造函数里就可以看出来，因为构造函数在函数里面就定义了对象的实例信息，而原型对象可以在任何地方定义属性和方法。</p>
+<h2 id="一个🌰"><a href="#一个🌰" class="headerlink" title="一个🌰"></a>一个🌰</h2><p><strong>创建自定义类型最常见的方式就是组合使用 构造函数模式 和 原型模式。构造函数模式用于定义实例属性；</strong><br><strong>原型模式用于定义方法和共享的属性。</strong>这样的好处是每个实例都会有一份属于自己的属性副本，但同时又共享着对方法的引用，最大限度的<strong>节省了内存</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name, age, job</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.name = name;</span><br><span class="line">  <span class="built_in">this</span>.age = age;</span><br><span class="line">  <span class="built_in">this</span>.job = job;</span><br><span class="line">  <span class="built_in">this</span>.love = [<span class="string">&#x27;qiqi&#x27;</span>, <span class="string">&#x27;lili&#x27;</span>];</span><br><span class="line">&#125;</span><br><span class="line">Person.prototype = &#123;</span><br><span class="line">  <span class="title">constructor</span>: <span class="title">Person</span>,</span><br><span class="line">  <span class="title">dream</span>: <span class="title">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.love[<span class="number">0</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> person1 = <span class="keyword">new</span> Person(<span class="string">&#x27;bangbang&#x27;</span>, <span class="number">18</span>, <span class="string">&#x27;programmer&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> person2 = <span class="keyword">new</span> Person(<span class="string">&#x27;xiaoya&#x27;</span>, <span class="number">18</span>, <span class="string">&#x27;teacher&#x27;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(person1.love) <span class="comment">// [&quot;qiqi&quot;, &quot;lili&quot;]</span></span><br><span class="line"><span class="built_in">console</span>.log(person2.love) <span class="comment">// [&quot;qiqi&quot;, &quot;lili&quot;]</span></span><br><span class="line"><span class="built_in">console</span>.log(person1.love === person2.love);  <span class="comment">//false</span></span><br><span class="line"><span class="comment">//给person1的love属性添加元素</span></span><br><span class="line">person1.love.push(<span class="string">&#x27;niuniu&#x27;</span>);</span><br><span class="line"><span class="built_in">console</span>.log(person1.love)  <span class="comment">// [&quot;qiqi&quot;, &quot;lili&quot;, &quot;niuniu&quot;]</span></span><br><span class="line"><span class="built_in">console</span>.log(person2.love)  <span class="comment">// [&quot;qiqi&quot;, &quot;lili&quot;]</span></span><br><span class="line"><span class="built_in">console</span>.log(person1.love === person2.love);  <span class="comment">//false</span></span><br><span class="line"><span class="built_in">console</span>.log(person1.dream === person2.dream);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<h2 id="有那么·意思"><a href="#有那么·意思" class="headerlink" title="有那么·意思"></a>有那么·意思</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这行代码的输出结果是true，是不是很神奇😜</span></span><br><span class="line"><span class="built_in">Array</span>.prototype.__proto__.toString === <span class="built_in">Object</span>.prototype.toString </span><br><span class="line"><span class="comment">// 那么再猜猜这行呢😼</span></span><br><span class="line"><span class="built_in">Number</span>.prototype.__proto__.toString === <span class="built_in">Object</span>.prototype.toString </span><br></pre></td></tr></table></figure>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/flyingpig2016/article/details/53048394">深入理解prototype</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35458229">理解JS的prototype</a></p>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2020/06/10/【JS】简单聊一下prototype/";</script><script>var DISQUS_IDENTIFIER = "2020/06/10/【JS】简单聊一下prototype/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+    //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+    $("header").backstretch("/images/header.jpg");
+    //- 关于hightlight.js：https://highlightjs.org/
+    //- $("figure.highlight").each(function(i, block) {
+    //-     $(block).removeClass("highlight");
+    //-     $(block).find("td.gutter").remove();
+    //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+    //-     $(block).next().find("code").text((block.innerText || block.textContent));
+    //-     $(block).remove();
+    //- });
+    //- $(".__tobehl").each(function(i, block) {
+    //-     hljs.highlightBlock(block);
+    //- });
+    $("article.full img").each(function() {
+        if($(this).parent().is("article")) {
+            $(this).wrap("<p style='text-align: center;'></p>");
+        } else {
+            $(this).parent().css("text-align", "center");
+        }
+    });
+
+    if($(".article-toc").children().length < 2) {
+        $(".article-toc").css("display", "none");
+    };
+    //- 直接用了通用的音频格式，同时支持Safari和Chrome
+    const ap = new APlayer({
+      container: document.getElementById('aplayer'),
+      mini: 'true',
+      loop: 'all',
+      theme: 'none',
+      volume: 0.3,
+      //- 可以加入多首歌
+      audio: [
+        {
+          name: 'name',
+          artist: 'artist',
+          url: '/audio/tadejiemao.flac',
+          cover: '/images/svdb.png',
+        },
+        {
+          name: 'name',
+          artist: 'artist',
+          url: '/audio/miaosu.aac',
+          cover: '/images/svdb.png',
+        },
+      ]
+    }); 
+    //- 创建pjax对象
+    var pjax = new Pjax({
+      elements: "a",
+      selectors: [
+        "main",
+      ]
+    })
+    window.addEventListener('pjax:complete', function() {
+      //- console.log('加载完成')
+      $("figure.highlight").each(function(i, block) {
+        $(block).removeClass("highlight");
+        $(block).find("td.gutter").remove();
+        $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+        $(block).next().find("code").text((block.innerText || block.textContent));
+        $(block).remove();
+      });
+      $(".__tobehl").each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    })
+});</script></body></html>
