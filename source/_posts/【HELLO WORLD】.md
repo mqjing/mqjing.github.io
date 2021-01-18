@@ -1,6 +1,6 @@
 ---
 
-title: HELLO WORLD
+title: 【HELLO WORLD】
 
 date: 2020-06-03 23:33
 
