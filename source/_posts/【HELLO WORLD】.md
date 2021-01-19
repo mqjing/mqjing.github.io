@@ -35,3 +35,13 @@ updated: 2020-06-06 20:39
 ---
 
 # 路漫漫其修远兮
+
+---
+
+> Those times when you get up early and you work hard,
+Those times when you stay up late and you work hard,
+Those times you don’t feel like working,
+you‘re too tired,
+you don’t want to push yourself,
+but do it anyway,
+That is actually the DREAM.
