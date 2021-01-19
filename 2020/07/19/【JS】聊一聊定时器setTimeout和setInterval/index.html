@@ -1,0 +1,98 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="写JS的时候经常会用到定时器，写这篇文章的目的是详细说明一下定时器的使用方法以及使用场景，以及一些注意事项。"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【JS】聊一聊定时器setTimeout和setInterval · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><article class="full"><h1>【JS】聊一聊定时器setTimeout和setInterval</h1><span class="post-meta">写于<time> 2020 年 07 月 19 日 18 时 13 分</time><br>更新于<time> 2021 年 01 月 19 日 18 时 17 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%AE%9A%E6%97%B6%E5%99%A8%E7%9A%84%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">一、定时器的介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%B8%85%E9%99%A4%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">二、清除定时器</span></a></li></ol></div><p>写JS的时候经常会用到定时器，写这篇文章的目的是详细说明一下定时器的使用方法以及使用场景，以及一些注意事项。</p>
+<a id="more"></a>
+
+<h3 id="一、定时器的介绍"><a href="#一、定时器的介绍" class="headerlink" title="一、定时器的介绍"></a>一、定时器的介绍</h3><p>Windows对象提供了两种定时器方法，分别是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">window.setTimeout(code, millisec) # 第一种</span><br><span class="line">window.setInterval(code, millisec) # 第二种</span><br></pre></td></tr></table></figure>
+<p>其中，<br>第一种的作用是：<strong>让code等待millisec时间后运行</strong>，<br>第二种的作用是：<strong>每隔millisec时间就运行一次code</strong>。</p>
+<p>里边的<code>code</code>可以是用引号括起来的一段代码，也可以是一个函数名。这里需要注意的是：</p>
+<blockquote>
+<p>如果使用函数名作为code的部分，则里边一定不能带参数，如果想要带参数的话，只能是使用字符串形式。<br>下面用代码说明：</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test是一个带参数的函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">param</span>) </span>&#123;</span><br><span class="line">	<span class="built_in">console</span>.log(param)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果想让test等待3秒后执行，应该这么写</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="string">&#x27;test(&#x27;</span>正确的写法<span class="string">&#x27;)&#x27;</span>, <span class="number">3000</span>)</span><br><span class="line"><span class="comment">// 可以看到 setTimeout 的第一个参数是一个字符串的形式，而这个字符串其实是一个带参数的函数</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果像下面这么写的话，test 则会立即执行</span></span><br><span class="line"><span class="built_in">setTimeout</span>(test(<span class="string">&#x27;错误的写法&#x27;</span>), <span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+<p>可以这么来记忆：</p>
+<blockquote>
+<p>函数名，不带参；<br>字符串，放 可执行；<br>匿名函数直接写</p>
+</blockquote>
+<h3 id="二、清除定时器"><a href="#二、清除定时器" class="headerlink" title="二、清除定时器"></a>二、清除定时器</h3><p>定时器在调用的时候会返回一个整数，代表了这个定时器的序号。方便我们清除这个定时器⏲️。</p>
+<p>调用是 set， 那么清除的时候很显然就是 clear 了。<br>至于为什么要清除定时器，原因挺多的，有时候是因为如果不清楚，那么线程空闲的时候他还会再执行一次。像setInterval这种还会不停的去执行，所以根据项目实际的需求来决定怎么去删除定时器。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">window.clearTimeout(obj) # 清除第一种定时器🆑</span><br><span class="line">window.clearInterval(obj) # 清除第二种定时器🆑</span><br></pre></td></tr></table></figure>
+<p><em>有时候实际写的时候还喜欢给存储定时器的变量置空，这样可以释放内存，也方便后面代码的判断</em></p>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2020/07/19/【JS】聊一聊定时器setTimeout和setInterval/";</script><script>var DISQUS_IDENTIFIER = "2020/07/19/【JS】聊一聊定时器setTimeout和setInterval/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+    //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+    $("header").backstretch("/images/header.jpg");
+    //- 关于hightlight.js：https://highlightjs.org/
+    //- $("figure.highlight").each(function(i, block) {
+    //-     $(block).removeClass("highlight");
+    //-     $(block).find("td.gutter").remove();
+    //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+    //-     $(block).next().find("code").text((block.innerText || block.textContent));
+    //-     $(block).remove();
+    //- });
+    //- $(".__tobehl").each(function(i, block) {
+    //-     hljs.highlightBlock(block);
+    //- });
+    $("article.full img").each(function() {
+        if($(this).parent().is("article")) {
+            $(this).wrap("<p style='text-align: center;'></p>");
+        } else {
+            $(this).parent().css("text-align", "center");
+        }
+    });
+
+    if($(".article-toc").children().length < 2) {
+        $(".article-toc").css("display", "none");
+    };
+    //- 直接用了通用的音频格式，同时支持Safari和Chrome
+    const ap = new APlayer({
+      container: document.getElementById('aplayer'),
+      mini: 'true',
+      loop: 'all',
+      theme: 'none',
+      volume: 0.3,
+      //- 可以加入多首歌
+      audio: [
+        {
+          name: 'name',
+          artist: 'artist',
+          url: '/audio/tadejiemao.flac',
+          cover: '/images/svdb.png',
+        },
+        {
+          name: 'name',
+          artist: 'artist',
+          url: '/audio/miaosu.aac',
+          cover: '/images/svdb.png',
+        },
+      ]
+    }); 
+    //- 创建pjax对象
+    var pjax = new Pjax({
+      elements: "a",
+      selectors: [
+        "main",
+      ]
+    })
+    window.addEventListener('pjax:complete', function() {
+      //- console.log('加载完成')
+      $("figure.highlight").each(function(i, block) {
+        $(block).removeClass("highlight");
+        $(block).find("td.gutter").remove();
+        $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+        $(block).next().find("code").text((block.innerText || block.textContent));
+        $(block).remove();
+      });
+      $(".__tobehl").each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    })
+});</script></body></html>
