@@ -6,72 +6,72 @@ script(src='https://cdn.jsdelivr.net/npm/pjax/pjax.js')
 link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css')
 script(src= config.root + 'scripts/highlight.pack.js')
 script.
-    $(function() {
-        //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
-        $("header").backstretch("https://www.oookini.com/assets/header.jpg");
-        //- 关于hightlight.js：https://highlightjs.org/
-        //- $("figure.highlight").each(function(i, block) {
-        //-     $(block).removeClass("highlight");
-        //-     $(block).find("td.gutter").remove();
-        //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
-        //-     $(block).next().find("code").text((block.innerText || block.textContent));
-        //-     $(block).remove();
-        //- });
-        //- $(".__tobehl").each(function(i, block) {
-        //-     hljs.highlightBlock(block);
-        //- });
-        $("article.full img").each(function() {
-            if($(this).parent().is("article")) {
-                $(this).wrap("<p style='text-align: center;'></p>");
-            } else {
-                $(this).parent().css("text-align", "center");
-            }
-        });
-
-        if($(".article-toc").children().length < 2) {
-            $(".article-toc").css("display", "none");
-        };
-        //- 直接用了通用的音频格式，同时支持Safari和Chrome
-        const ap = new APlayer({
-          container: document.getElementById('aplayer'),
-          mini: 'true',
-          loop: 'all',
-          theme: 'none',
-          volume: 0.3,
-          //- 可以加入多首歌
-          audio: [
-            {
-              name: 'name',
-              artist: 'artist',
-              url: 'https://www.oookini.com/assets/33jie.flac',
-              cover: '/images/svdb.png',
-            },
-            {
-              name: 'name',
-              artist: 'artist',
-              url: 'https://www.oookini.com/assets/33miao.aac',
-              cover: '/images/svdb.png',
-            },
-          ]
-        }); 
-        //- 创建pjax对象
-        var pjax = new Pjax({
-          elements: "a",
-          selectors: [
-            "main",
-          ]
-        })
-        window.addEventListener('pjax:complete', function() {
-          //- console.log('加载完成')
-          $("figure.highlight").each(function(i, block) {
-            $(block).removeClass("highlight");
-            $(block).find("td.gutter").remove();
-            $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
-            $(block).next().find("code").text((block.innerText || block.textContent));
-            $(block).remove();
-          });
-          $(".__tobehl").each(function(i, block) {
-            hljs.highlightBlock(block);
-          });
-        })
+  $(function() {
+    //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+    $("header").backstretch("https://www.oookini.com/assets/header.jpg");
+    //- 关于hightlight.js：https://highlightjs.org/
+    //- $("figure.highlight").each(function(i, block) {
+    //-     $(block).removeClass("highlight");
+    //-     $(block).find("td.gutter").remove();
+    //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+    //-     $(block).next().find("code").text((block.innerText || block.textContent));
+    //-     $(block).remove();
+    //- });
+    //- $(".__tobehl").each(function(i, block) {
+    //-     hljs.highlightBlock(block);
+    //- });
+    $("article.full img").each(function() {
+      if($(this).parent().is("article")) {
+        $(this).wrap("<p style='text-align: center;'></p>");
+      } else {
+        $(this).parent().css("text-align", "center");
+      }
     });
+
+    if($(".article-toc").children().length < 2) {
+      $(".article-toc").css("display", "none");
+    };
+    //- 直接用了通用的音频格式，同时支持Safari和Chrome
+    const ap = new APlayer({
+      container: document.getElementById('aplayer'),
+      mini: 'true',
+      loop: 'all',
+      theme: 'none',
+      volume: 0.3,
+      //- 可以加入多首歌
+      audio: [
+        {
+          name: 'name',
+          artist: 'artist',
+          url: 'https://www.oookini.com/assets/33miao.aac',
+          cover: '/images/svdb.png',
+        },
+        {
+          name: 'name',
+          artist: 'artist',
+          url: 'https://www.oookini.com/assets/33jie.flac',
+          cover: '/images/svdb.png',
+        },
+      ]
+    }); 
+    //- 创建pjax对象
+    var pjax = new Pjax({
+      elements: "a",
+      selectors: [
+        "main",
+      ]
+    })
+    window.addEventListener('pjax:complete', function() {
+      //- console.log('加载完成')
+      $("figure.highlight").each(function(i, block) {
+        $(block).removeClass("highlight");
+        $(block).find("td.gutter").remove();
+        $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+        $(block).next().find("code").text((block.innerText || block.textContent));
+        $(block).remove();
+      });
+      $(".__tobehl").each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    })
+  });
