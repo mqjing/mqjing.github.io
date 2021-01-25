@@ -1,0 +1,107 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="Async/await 是建立在Promise上的，不能被使用在普通回调以及节点回调Async/await 和 Promise 很像，不阻塞Async/await 代码看起来很像同步代码。
+
+语法假设getJSON返回值是Promise，并且Promise resoles有一些JSON对象，我们只想"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【JS】Async-await和Promise的区别 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><article class="full"><h1>【JS】Async-await和Promise的区别</h1><span class="post-meta">写于<time> 2020 年 10 月 21 日 18 时 30 分</time><br>更新于<time> 2021 年 01 月 25 日 18 时 58 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E5%93%AA%E4%BA%9B%E5%A5%BD%E5%A4%84"><span class="toc-number">2.</span> <span class="toc-text">有哪些好处</span></a></li></ol></div><blockquote>
+<p>Async/await 是建立在Promise上的，不能被使用在普通回调以及节点回调<br>Async/await 和 Promise 很像，不阻塞<br>Async/await 代码看起来很像同步代码。</p>
+</blockquote>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>假设<code>getJSON</code>返回值是<code>Promise</code>，并且<code>Promise resoles</code>有一些JSON对象，我们只想调用他并且记录JSON并返回完成。<br><strong>使用Promise</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; () &#x3D;&gt;</span><br><span class="line">  getJSON()</span><br><span class="line">    .then(data &#x3D;&gt; &#123;</span><br><span class="line">      console.log(data)</span><br><span class="line">      return &quot;done&quot;</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">makeRequest()</span><br></pre></td></tr></table></figure>
+<p><strong>使用Async</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; async() &#x3D;&gt; &#123;</span><br><span class="line">        console.log(await getJSON)</span><br><span class="line">        return &quot;done&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">makeRequest()</span><br></pre></td></tr></table></figure>
+<p><strong>区别</strong></p>
+<ol>
+<li>在函数前有一个关键字<code>async</code>，<code>await</code>关键字只能在使用<code>async</code>定义的函数中使用。任何一个<code>async</code>函数都会隐式返回一个<code>promise</code>，并且<code>promise resolve</code>的值就是 <code>return</code> 返回的值 (例子中是<code>done</code>)。</li>
+<li>不能在函数开头使用<code>await</code></li>
+</ol>
+<h2 id="有哪些好处"><a href="#有哪些好处" class="headerlink" title="有哪些好处"></a>有哪些好处</h2><ol>
+<li>简洁的代码，使用<code>Async</code>可以让代码变简洁很多，不需要像<code>Promise</code>一样需要使用<code>then</code><br>比如条件语句，对比一下两种方式的写法：</li>
+</ol>
+<p><strong>使用Promise</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  return getJSON()</span><br><span class="line">    .then(data &#x3D;&gt; &#123;</span><br><span class="line">      if (data.needsAnotherRequest) &#123;</span><br><span class="line">        return makeAnotherRequest(data)</span><br><span class="line">          .then(moreData &#x3D;&gt; &#123;</span><br><span class="line">            console.log(moreData)</span><br><span class="line">            return moreData</span><br><span class="line">          &#125;)</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        console.log(data)</span><br><span class="line">        return data</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用Async</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; async () &#x3D;&gt; &#123;</span><br><span class="line">  const data &#x3D; await getJSON()</span><br><span class="line">  if (data.needsAnotherRequest) &#123;</span><br><span class="line">    const moreData &#x3D; await makeAnotherRequest(data);</span><br><span class="line">    console.log(moreData)</span><br><span class="line">    return moreData</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    console.log(data)</span><br><span class="line">    return data    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>中间值<br>在一些场景中，也许需要 promise1 去触发 promise2 再去触发 promise3，这个时候代码应该是这样的：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  return promise1()</span><br><span class="line">    .then(value1 &#x3D;&gt; &#123;</span><br><span class="line">      &#x2F;&#x2F; do something</span><br><span class="line">      return promise2(value1)</span><br><span class="line">        .then(value2 &#x3D;&gt; &#123;</span><br><span class="line">          &#x2F;&#x2F; do something          </span><br><span class="line">          return promise3(value1, value2)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+使用<code>Async</code>就会变得很简单：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; async () &#x3D;&gt; &#123;</span><br><span class="line">  const value1 &#x3D; await promise1()</span><br><span class="line">  const value2 &#x3D; await promise2(value1)</span><br><span class="line">  return promise3(value1, value2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>错误栈<br>如果<code>Promise</code>连续调用，对于错误的处理是很麻烦的。因为无法知道错误出在哪里，像这样：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; () &#x3D;&gt; &#123;</span><br><span class="line">  return callAPromise()</span><br><span class="line">    .then(() &#x3D;&gt; callAPromise())</span><br><span class="line">    .then(() &#x3D;&gt; callAPromise())</span><br><span class="line">    .then(() &#x3D;&gt; callAPromise())</span><br><span class="line">    .then(() &#x3D;&gt; callAPromise())</span><br><span class="line">    .then(() &#x3D;&gt; &#123;</span><br><span class="line">      throw new Error(&quot;oops&quot;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">makeRequest()</span><br><span class="line">  .catch(err &#x3D;&gt; &#123;</span><br><span class="line">    console.log(err);</span><br><span class="line">    &#x2F;&#x2F; output</span><br><span class="line">    &#x2F;&#x2F; Error: oops at callAPromise.then.then.then.then.then (index.js:8:13)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+但是对于<code>Async</code>就简单许多：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">const makeRequest &#x3D; async () &#x3D;&gt; &#123;</span><br><span class="line">  await callAPromise()</span><br><span class="line">  await callAPromise()</span><br><span class="line">  await callAPromise()</span><br><span class="line">  await callAPromise()</span><br><span class="line">  await callAPromise()</span><br><span class="line">  throw new Error(&quot;oops&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">makeRequest()</span><br><span class="line">  .catch(err &#x3D;&gt; &#123;</span><br><span class="line">    console.log(err);</span><br><span class="line">    &#x2F;&#x2F; output</span><br><span class="line">    &#x2F;&#x2F; Error: oops at makeRequest (index.js:7:9)</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+原文链接：<a href="'https://segmentfault.com/a/1190000013612116">Async/await 和 Promises 区别</a></li>
+</ol>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2020/10/21/【JS】Async-await和Promise的区别/";</script><script>var DISQUS_IDENTIFIER = "2020/10/21/【JS】Async-await和Promise的区别/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+  //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+  $("header").backstretch("/images/header.jpg");
+  //- 关于hightlight.js：https://highlightjs.org/
+  //- $("figure.highlight").each(function(i, block) {
+  //-     $(block).removeClass("highlight");
+  //-     $(block).find("td.gutter").remove();
+  //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+  //-     $(block).next().find("code").text((block.innerText || block.textContent));
+  //-     $(block).remove();
+  //- });
+  //- $(".__tobehl").each(function(i, block) {
+  //-     hljs.highlightBlock(block);
+  //- });
+  $("article.full img").each(function() {
+    if($(this).parent().is("article")) {
+      $(this).wrap("<p style='text-align: center;'></p>");
+    } else {
+      $(this).parent().css("text-align", "center");
+    }
+  });
+
+  if($(".article-toc").children().length < 2) {
+    $(".article-toc").css("display", "none");
+  };
+  //- 直接用了通用的音频格式，同时支持Safari和Chrome
+  const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+    mini: 'true',
+    loop: 'all',
+    theme: 'none',
+    volume: 0.3,
+    //- 可以加入多首歌
+    audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33miao.aac',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33jie.flac',
+        cover: '/images/svdb.png',
+      },
+    ]
+  }); 
+  //- 创建pjax对象
+  var pjax = new Pjax({
+    elements: "a",
+    selectors: [
+      "main",
+    ]
+  })
+  window.addEventListener('pjax:complete', function() {
+    //- console.log('加载完成')
+    $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+    });
+    $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+  })
+});</script></body></html>
