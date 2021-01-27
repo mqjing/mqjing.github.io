@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="一个闪瞎眼的深拷贝写法，不看后悔一辈子🏷️"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【JS】写一个优美的深拷贝吧 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><article class="full"><h1>【JS】写一个优美的深拷贝吧</h1><span class="post-meta">写于<time> 2020 年 08 月 18 日 23 时 11 分</time><br>更新于<time> 2021 年 01 月 25 日 18 时 58 分</time></span><div class="article-toc"><strong>大纲</strong></div><p>先说明一下为什么会有这个问题，数据类型分为<strong>原始类型</strong>（number、string等）和<strong>引用类型</strong>（比如数组）。这就意味着：当你把一个数组赋值给一个变量的时候，你是将<strong>数组的地址而非数组本身</strong>赋给了变量。<br>先给出深拷贝和浅拷贝的定义：</p>
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="一个闪瞎眼的深拷贝写法，不看后悔一辈子🏷️"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【JS】写一个优美的深拷贝吧 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><div class="black-overlay"><div class="loading-container"><span class="loading l-1"></span><span class="loading l-2"></span><span class="loading l-3"></span><span class="loading l-4"></span><span class="loading l-5"></span><span class="loading l-6"></span></div></div><article class="full"><h1>【JS】写一个优美的深拷贝吧</h1><span class="post-meta">写于<time> 2020 年 08 月 18 日 23 时 11 分</time><br>更新于<time> 2021 年 01 月 28 日 00 时 27 分</time></span><div class="article-toc"><strong>大纲</strong></div><p>先说明一下为什么会有这个问题，数据类型分为<strong>原始类型</strong>（number、string等）和<strong>引用类型</strong>（比如数组）。这就意味着：当你把一个数组赋值给一个变量的时候，你是将<strong>数组的地址而非数组本身</strong>赋给了变量。<br>先给出深拷贝和浅拷贝的定义：</p>
 <blockquote>
 <p><strong>浅拷贝</strong>：创建一个新对象，这个对象有着原始对象属性值的一份精确拷贝。如果属性是基本类型，拷贝的就是基本类型；如果属性是引用类型，拷贝的就是引用类型，所以如果其中一个对象改变了这个地址，就会影响到另一个对象。<br><strong>深拷贝</strong>：将一个对象从内存中完整的拷贝出来一份，从堆内存中开辟一个新的区域存放新对象，且修改新对象不会影响原对象。</p>
 </blockquote>
@@ -34,16 +34,16 @@
   //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
   $("header").backstretch("/images/header.jpg");
   //- 关于hightlight.js：https://highlightjs.org/
-  //- $("figure.highlight").each(function(i, block) {
-  //-     $(block).removeClass("highlight");
-  //-     $(block).find("td.gutter").remove();
-  //-     $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
-  //-     $(block).next().find("code").text((block.innerText || block.textContent));
-  //-     $(block).remove();
-  //- });
-  //- $(".__tobehl").each(function(i, block) {
-  //-     hljs.highlightBlock(block);
-  //- });
+  $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+  });
+  $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+  });
   $("article.full img").each(function() {
     if($(this).parent().is("article")) {
       $(this).wrap("<p style='text-align: center;'></p>");
@@ -85,7 +85,10 @@
       "main",
     ]
   })
-  window.addEventListener('pjax:complete', function() {
+  $(document).on('pjax:send', function() {
+    $('.black-overlay').show()
+  });
+  $(document).on('pjax:complete', function() {
     //- console.log('加载完成')
     $("figure.highlight").each(function(i, block) {
       $(block).removeClass("highlight");
@@ -97,5 +100,6 @@
     $(".__tobehl").each(function(i, block) {
       hljs.highlightBlock(block);
     });
-  })
+    $('.black-overlay').hide();
+  });
 });</script></body></html>
