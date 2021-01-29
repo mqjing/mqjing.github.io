@@ -132,4 +132,4 @@ makeRequest()
   })
 ```
 
-原文链接：[Async/await 和 Promises 区别]('https://segmentfault.com/a/1190000013612116)
+原文链接：[Async/await 和 Promises 区别](https://segmentfault.com/a/1190000013612116)
