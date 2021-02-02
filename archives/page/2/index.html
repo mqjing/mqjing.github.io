@@ -1,0 +1,80 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Archives · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><div class="black-overlay"><div class="loading-container"><span class="loading l-1"></span><span class="loading l-2"></span><span class="loading l-3"></span><span class="loading l-4"></span><span class="loading l-5"></span><span class="loading l-6"></span></div></div><script>window.location.href = "http://example.com//pigeonhole";
+</script></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+  //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+  $("header").backstretch("/images/header.jpg");
+  //- 关于hightlight.js：https://highlightjs.org/
+  $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+  });
+  $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+  });
+  $("article.full img").each(function() {
+    if($(this).parent().is("article")) {
+      $(this).wrap("<p style='text-align: center;'></p>");
+    } else {
+      $(this).parent().css("text-align", "center");
+    }
+  });
+
+  if($(".article-toc").children().length < 2) {
+    $(".article-toc").css("display", "none");
+  };
+  //- 直接用了通用的音频格式，同时支持Safari和Chrome
+  const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+    mini: 'true',
+    loop: 'all',
+    theme: 'none',
+    volume: 0.3,
+    //- 可以加入多首歌
+    audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/summersea.m4a',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33jie.flac',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33miao.aac',
+        cover: '/images/svdb.png',
+      },
+    ]
+  }); 
+  //- 创建pjax对象
+  var pjax = new Pjax({
+    elements: "a",
+    selectors: [
+      "main",
+    ]
+  })
+  $(document).on('pjax:send', function() {
+    $('.black-overlay').show()
+  });
+  $(document).on('pjax:complete', function() {
+    //- console.log('加载完成')
+    $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+    });
+    $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+    $('.black-overlay').hide();
+  });
+});</script></body></html>

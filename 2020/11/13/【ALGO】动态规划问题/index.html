@@ -1,0 +1,126 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="简单聊一聊动态规划"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【ALGO】谈一谈动态规划 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><div class="black-overlay"><div class="loading-container"><span class="loading l-1"></span><span class="loading l-2"></span><span class="loading l-3"></span><span class="loading l-4"></span><span class="loading l-5"></span><span class="loading l-6"></span></div></div><article class="full"><h1>【ALGO】谈一谈动态规划</h1><span class="post-meta">写于<time> 2020 年 11 月 13 日 23 时 30 分</time><br>更新于<time> 2020 年 12 月 16 日 00 时 39 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="toc-number">1.</span> <span class="toc-text">基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%AD%A5%E9%AA%A4"><span class="toc-number">2.</span> <span class="toc-text">设计步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E7%9A%84%E7%89%B9%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">动态规划的特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E4%BE%8B%E5%AD%90%F0%9F%8C%B0"><span class="toc-number">4.</span> <span class="toc-text">几个例子🌰</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E7%88%AC%E6%A5%BC%E6%A2%AF%E9%97%AE%E9%A2%98"><span class="toc-number">4.1.</span> <span class="toc-text">最简单的爬楼梯问题</span></a></li></ol></li></ol></div><blockquote>
+<p>不得不说，光“动态规划”这四个大字看起来就很忽悠</p>
+</blockquote>
+<p>当然这篇文章并不能准确详尽专业的对这四个大字进行阐述，只是聊聊我自己的理解，以及给出几个🌰，方便能更好的应用到<del>刷题</del>，呸，工作中…</p>
+<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>首先来说一下他的基本思想：<strong>问题的最优解如果可以由子问题的最优解推导得到，则可以先求解子问题的最优解，再构造原问题的最优解；若子问题有较多的重复出现，则可以自底向上从最终子问题向原问题求解</strong>。</p>
+<p>参考过的文章也挺多，其中影响比较大的还是这篇来自<del>逼</del>知乎的回答：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/39948290/answer/883302989">如何理解动态规划？ - zhen tan的回答 - 知乎</a></p>
+<p>根据上面文章作者的描述，动态规划说白了就是高中数列题的魔改版。看起来确实像那么回事</p>
+<h2 id="设计步骤"><a href="#设计步骤" class="headerlink" title="设计步骤"></a>设计步骤</h2><p>若要用动态规划解决问题，以下三个步骤必不可少：</p>
+<ol>
+<li>建立状态转移方程（就是找规律，抽象成函数）</li>
+<li>缓存并复用以往结果（就是找到规律后把每一次的计算都存下来，后面使用的时候直接用）</li>
+<li>按顺序从小往大算</li>
+</ol>
+<h2 id="动态规划的特点"><a href="#动态规划的特点" class="headerlink" title="动态规划的特点"></a>动态规划的特点</h2><ul>
+<li>把原始问题划分成一系列子问题</li>
+<li>求解每个子问题仅一次，并将其结果保存在一个表中，以后用到时直接读取，不重复计算</li>
+<li>自底向上的计算</li>
+<li>整体问题的最优解取决于子问题的最优解（也就是状态转移方程的好坏）（将子问题称之为状态，最终状态的求解归结为其他状态的求解）</li>
+</ul>
+<h2 id="几个例子🌰"><a href="#几个例子🌰" class="headerlink" title="几个例子🌰"></a>几个例子🌰</h2><h3 id="最简单的爬楼梯问题"><a href="#最简单的爬楼梯问题" class="headerlink" title="最简单的爬楼梯问题"></a>最简单的爬楼梯问题</h3><blockquote>
+<p>有一段连续的楼梯，共100阶台阶。明强的腿比较短，他最多一次迈两阶台阶，要从楼梯底部向上爬到楼梯顶部。问他一共有多少种走法？</p>
+</blockquote>
+<p>这个问题乍一看好像很复杂，但是你再乍一下，用上动态规划，他就很清晰了。我们来问这么几个问题：</p>
+<ol>
+<li>他上到第1节台阶有几种走法？显然是只有<strong>1</strong>种</li>
+<li>他上到第2节台阶有几种走法？显然有1+1、0+2，也就是<strong>2</strong>种</li>
+<li>他上到第3节台阶有几中走法？显然有1+1+1、1+2、2+1，也就是<strong>3</strong>种</li>
+<li>他上到第4节台阶有几中走法？显然有1+1+1+1、1+1+2、1+2+1、2+1+1、2+2，也就是<strong>5</strong>种<br>也就是说f(1)的最优解是1，f(2)的最优解是2，f(3)的最优解是3，f(4)的最优解是5，看到规律了吗，这™️显然就是一个斐波那契数列呀。但是为什么呢？我来解释一下：</li>
+</ol>
+<p>试问：<br>你想一次就上到第3节台阶的话，你前一步只能在那几个台阶上？显然你只能在第1节或者第2节上<br>同理，你想一次就上到第4节台阶的话，你前一步只能在那几个台阶上？显然你只能在第2节或者第3节上，为什么不能在第1节上呢，因为一次迈3节容易扯着🥚…</p>
+<p>所以就出来了，你上到第n节的台阶的最优解就是 你上到n-1节的最优解 + 你上到n-2节的最优解。</p>
+<p>这个问题你当然可以用递归来解，但是用递归的时间复杂度已经是指数级的了，下面是用动态规划思想写的代码，没有经过优化，方便理解：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">var fib &#x3D; function(n) &#123;</span><br><span class="line">    if (n &#x3D;&#x3D;&#x3D; 0) return 0</span><br><span class="line">    if (n &#x3D;&#x3D;&#x3D; 1) return 1</span><br><span class="line">    let res &#x3D; []</span><br><span class="line">    res[0] &#x3D; 0</span><br><span class="line">    res[1] &#x3D; 1</span><br><span class="line">    for (let i&#x3D;2; i&lt;&#x3D;n; i++) &#123;</span><br><span class="line">        res[i] &#x3D; res[i-1]+res[i-2];</span><br><span class="line">    &#125;</span><br><span class="line">    return res[n]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>时间复杂度瞬间降到了O(n)，但是这样会有一个问题，就是后面的数据太大，导致我在刷这道题👇的时候总是出不来正确结果：</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/fei-bo-na-qi-shu-lie-lcof/">剑指 Offer 10- I. 斐波那契数列</a></p>
+<p>我的代码是最后一步才做取模运算，殊不知，在往数组里存的时候就要存成取模的结果。无语😓</p>
+<p>今晚上已经很累了，后面想到其他的再更新吧。</p>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2020/11/13/【ALGO】动态规划问题/";</script><script>var DISQUS_IDENTIFIER = "2020/11/13/【ALGO】动态规划问题/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+  //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+  $("header").backstretch("/images/header.jpg");
+  //- 关于hightlight.js：https://highlightjs.org/
+  $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+  });
+  $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+  });
+  $("article.full img").each(function() {
+    if($(this).parent().is("article")) {
+      $(this).wrap("<p style='text-align: center;'></p>");
+    } else {
+      $(this).parent().css("text-align", "center");
+    }
+  });
+
+  if($(".article-toc").children().length < 2) {
+    $(".article-toc").css("display", "none");
+  };
+  //- 直接用了通用的音频格式，同时支持Safari和Chrome
+  const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+    mini: 'true',
+    loop: 'all',
+    theme: 'none',
+    volume: 0.3,
+    //- 可以加入多首歌
+    audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/summersea.m4a',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33jie.flac',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33miao.aac',
+        cover: '/images/svdb.png',
+      },
+    ]
+  }); 
+  //- 创建pjax对象
+  var pjax = new Pjax({
+    elements: "a",
+    selectors: [
+      "main",
+    ]
+  })
+  $(document).on('pjax:send', function() {
+    $('.black-overlay').show()
+  });
+  $(document).on('pjax:complete', function() {
+    //- console.log('加载完成')
+    $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+    });
+    $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+    $('.black-overlay').hide();
+  });
+});</script></body></html>
