@@ -52,3 +52,5 @@ http://www.alloyteam.com/
 ## 腾讯视觉设计（有个组件库）
 https://tgideas.qq.com/
 
+## 前端开发周报
+http://caibaojian.com/
