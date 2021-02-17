@@ -1,17 +1,17 @@
 -
-    var title = page.title;
-    if(is_archive()) {
-        title = "Archives";
-        if(is_month()) {
-            title += ": " + page.year + "/" + page.month;
-        } else if(is_year()) {
-            title += ": " + page.year;
-        }
-    } else if(is_category()) {
-        title = "Category: " + page.category;
-    } else if(is_tag()) {
-        title = "Tag: " + page.tag;
+  var title = page.title;
+  if(is_archive()) {
+    title = "Archives";
+    if(is_month()) {
+      title += ": " + page.year + "/" + page.month;
+    } else if(is_year()) {
+      title += ": " + page.year;
     }
+  } else if(is_category()) {
+    title = "Category: " + page.category;
+  } else if(is_tag()) {
+    title = "Tag: " + page.tag;
+  }
 
 if config.author
   meta(name="author" content=config.author)
@@ -44,3 +44,13 @@ link(rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.
 link(rel="stylesheet" type="text/css" href= config.root + "styles/screen.css")
 link(rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css")
 link(rel="apple-touch-icon" size="144*144" href="/images/apple.png")
+
+//- 百度统计
+script.
+  var _hmt = _hmt || [];
+  (function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a7182e86f64b2a49ecf081d084972da9";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+  })();
