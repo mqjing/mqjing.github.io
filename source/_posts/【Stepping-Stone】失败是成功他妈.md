@@ -25,7 +25,7 @@ JSON.stringify(a)
 ### JS中查看数据类型的方法
 
 #### JS中的数据类型
-JS是一种弱类型语言，一般说来，JS有7种数据类型，包括三种基本类型：`Number、String、Boolean`，两种引用数据类型：`Object、Array`，以及两种特殊数据类型：`null、undefined`，es6中又新增了一种叫`Symbol`的数据类型，他的最大特点是**唯一性**，具体不展开说了，详情参考这个链接：[https://segmentfault.com/a/1190000018033214](关于es6的Symbol数据类型)。
+JS是一种弱类型语言，一般说来，JS有7种数据类型，包括三种基本类型：`Number、String、Boolean`，两种引用数据类型：`Object、Array`，以及两种特殊数据类型：`null、undefined`，es6中又新增了一种叫`Symbol`的数据类型，他的最大特点是**唯一性**，具体不展开说了，详情参考这个链接：[关于es6的Symbol数据类型](https://segmentfault.com/a/1190000018033214)。
 
 #### 如何判断JS中的数据类型
 不同类型的值所代表的布尔值情况：
