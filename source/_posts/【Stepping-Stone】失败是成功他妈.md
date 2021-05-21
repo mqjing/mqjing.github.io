@@ -78,5 +78,15 @@ Object.prototype.toString.call(123) // "[Object Number]"
 Object.prototype.toString.call(arr) // "[Object Array]"
 Object.prototype.toString.call(obj) // "[Object Object]"
 ```
-利用上面的方法就可以封装一个函数，判断结果是是那个从而返回不同的结果
+利用上面的方法就可以封装一个函数，判断结果是是那个从而返回不同的结果。
+
+## 2021-05-21
+### VUE+element 组件中回调函数传递额外参数
+
+问题是这样的，我想在组件中自带的回调函数函数中传递我自己的参数，但是发现用直接绑定的方式没办法传递，经过网上查找，发现可以用箭头函数的方式，即箭头函数里传原生参数，在箭头函数内调用的函数加入自己的参数。
+示例代码：
+```(javascript)
+<!-- 这里的value是回调函数自带的参数，代表了输入框的值，后面的两个参数是自己加的 -->
+<el-input @change="(value) => {handleChange(value, stepIndex, propIndex)}"> 
+```
 
