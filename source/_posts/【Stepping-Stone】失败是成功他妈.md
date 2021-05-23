@@ -90,3 +90,25 @@ Object.prototype.toString.call(obj) // "[Object Object]"
 <el-input @change="(value) => {handleChange(value, stepIndex, propIndex)}"> 
 ```
 
+## 2021-05-23
+### textarea 换行输入的问题
+
+项目中又一个需求，是这样的：
+> 1. 将数组中的字符串分行放到textarea中；2. 将textarea中的数据按行保存到一个数组中，即每一行都是一个数组元素
+
+通过将textarea中的数据打印出来查看，发现数据是保留了换行信息的，所以解决这个问题的关键是用正则表达式，`/[(\r\n)\r\n]+/`这个正则表达式会按照换行或者回车进行识别，那么就好办了。详情看下面代码：
+
+```(javaScript)
+// 假设从textarea中获取回来的数据是这个
+let value = `
+aa
+bb
+cc
+dd
+`
+// 接下来用split函数将上面的数据进行分割
+let res = value.split(/[(\r\n)\r\n]+/)
+
+// res = ['aa','bb','cc','dd']
+```
+这样就完成了，同理，要将数组换行显示到textarea组件中也只需要`res.join(/[(\r\n)\r\n]+/)`即可
