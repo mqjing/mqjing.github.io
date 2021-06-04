@@ -113,3 +113,77 @@ let res = value.split(/[(\r\n)\r\n]+/)
 ```
 这样就完成了，同理，要将数组换行显示到textarea组件中也只需要`res.join(/[(\r\n)\r\n]+/)`即可。
 之前对正则表达式没什么好感，虽然也会经常用到，但就是提不起兴趣，解决完了这个问题之后，感觉要去研究一下了，最好结合自己的理解写一篇文章出来。
+
+## 2021-06-04
+### 判断对象是否是空对象的问题
+
+最近真的是忙到爆炸，攒了好几个问题在笔记本上，没时间来整理，这会抽点空赶紧写一下。
+
+问题背景是在实际应用中经常会用到对象和数组判空，如果不进行判空的话可能会导致报错，但是对象不像数组可以直接`.length===0`就很麻烦，有几种方法这里比较一下吧
+
+#### 方法一 将json对象转化为json字符串，再判断该字符串是否为"{}" -- 此方法写的代码较长，难看
+```(javascript)
+
+let data = {};
+
+let b = (JSON.stringify(data) != "{}");
+
+alert(b); //false
+
+```
+
+#### 方法二 写个函数用遍历的方法，如果有元素返回true，没有返回false -- 此方法还可以，写在util-tools.js里直接引用过去用就行了
+```(javascript)
+
+let data = {};
+
+let b = function(data) {
+  for (let key in data) {
+    return true
+  }
+  return false
+};
+
+alert(b(data));//false
+
+```
+
+#### 方法三 使用`Object.getOwnPropertyNames()`方法
+
+此方法会获取到对象中的属性名，并将其存储到一个数组中，然后再去判断这个数组的长度是否为零就行了，代码也太长，放弃
+```(javascript)
+
+let data = {};
+
+let arr = Object.getOwnPropertyNames(data)
+
+alert(arr.length !== 0)); //false
+
+```
+
+#### 方法四 使用ES6的`Object.keys()`方法 
+
+跟方法三类似，也是返回一个数组，好处是函数名短了不少，
+```(javascript)
+
+let data = {};
+
+let arr = Object.keys(data)
+
+alert(arr.length !== 0)); //false
+
+```
+
+## 2021-06-05
+### vue项目中换行会被解析成空格
+
+这个也是实际项目中用到的，背景是后端会返回给我一个字符串，这个字符串里有各种转义符号，如果想让这些转义符号按照html的格式显示出来只需要在标签上加一个`v-html`就好了，但是同时又发现只加`v-html`，他会将换行符比如`\n`等解析为空格，后来通过查询，发现解决这个问题也很简单，只需要借助css中的一个属性，那就是:
+
+```(css)
+white-space: pre-wrap
+```
+
+同理，如果不想看到换行的话，就可以用
+```(css)
+white-space: no-wrap
+```
