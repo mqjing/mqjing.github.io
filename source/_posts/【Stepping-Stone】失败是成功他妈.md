@@ -121,7 +121,7 @@ let res = value.split(/[(\r\n)\r\n]+/)
 
 问题背景是在实际应用中经常会用到对象和数组判空，如果不进行判空的话可能会导致报错，但是对象不像数组可以直接`.length===0`就很麻烦，有几种方法这里比较一下吧
 
-#### 方法一 将json对象转化为json字符串，再判断该字符串是否为"{}" -- 此方法写的代码较长，难看
+· 方法一 将json对象转化为json字符串，再判断该字符串是否为"{}" -- 此方法写的代码较长，难看
 ```(javascript)
 
 let data = {};
@@ -132,7 +132,7 @@ alert(b); //false
 
 ```
 
-#### 方法二 写个函数用遍历的方法，如果有元素返回true，没有返回false -- 此方法还可以，写在util-tools.js里直接引用过去用就行了
+· 方法二 写个函数用遍历的方法，如果有元素返回true，没有返回false -- 此方法还可以，写在util-tools.js里直接引用过去用就行了
 ```(javascript)
 
 let data = {};
@@ -148,7 +148,7 @@ alert(b(data));//false
 
 ```
 
-#### 方法三 使用`Object.getOwnPropertyNames()`方法
+· 方法三 使用`Object.getOwnPropertyNames()`方法
 
 此方法会获取到对象中的属性名，并将其存储到一个数组中，然后再去判断这个数组的长度是否为零就行了，代码也太长，放弃
 ```(javascript)
@@ -161,7 +161,7 @@ alert(arr.length !== 0)); //false
 
 ```
 
-#### 方法四 使用ES6的`Object.keys()`方法 
+· 方法四 使用ES6的`Object.keys()`方法 
 
 跟方法三类似，也是返回一个数组，好处是函数名短了不少，
 ```(javascript)
