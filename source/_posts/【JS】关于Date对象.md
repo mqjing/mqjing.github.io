@@ -32,6 +32,7 @@ const monthStartDay = new Date(nowYear, nowMonth, 1) // 本月的开始日期
 const weekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek + 1) // 本周的开始日期
 ```
 
+
 解决问题的核心就是Date构造函数可以接收一个日期序列，年、月、日，例如：`new Date(year, month, day, hours, minutes, seconds, milliseconds)`
 
 关于`Date()`对象更详细的用法可以参考：[JavaScript 内置对象（二）：Date 对象（构造函数、属性和方法）](https://blog.csdn.net/jinshi_cn/article/details/2434439)
