@@ -187,3 +187,49 @@ white-space: pre-wrap
 ```(css)
 white-space: no-wrap
 ```
+
+## 2021-07-02
+### 项目中需要将数据转成csv文件并下载
+
+后端偷懒，前端遭殃。需求是将后端传过来的数据整理好格式，做成csv表格，然后下载。这个需求其实不难，首先来了解一下csv格式：
+
+> csv文件是一个纯文本文件，用逗号和换行分割，其中`","`表示换列，`"\n"`表示换行，每一个单元格加一个`"\t"`制表符是为了防止Excel自动将长数字转换为科学技术法等样式。
+
+所以最后实际上是将数据拼接成一个字符串，然后将字符串作为csv文件下载。过程是这样的：
+
+1. 准备表头和内容
+```(javascript)
+let jsonData = {
+  tHeader: ["姓名", "年龄"],
+  tRows: [],
+}
+```
+2. 然后将数据按照需求都push进这两个数组中，比如现在在`tHeader`中，每一个单元格就是数组的一个元素，
+定义一个`mainStr=[]`用来拼合表头和内容
+```(javascript)
+
+mainStr.push(jsonData.tHeader.join("\t,")) // 不要忘了逗号
+
+```
+3. 一般来说`tRows`需要通过遍历数据产生
+4. 最后得到的`mainStr`是一个数组，里边包含了每一行元素，此时只需要
+```(javascript)
+
+const merged = mainStr.join("\n")
+
+```
+5. 导出操作
+```(javascript)
+
+// encodeURIComponent解决中文乱码
+const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(merged)
+// 通过创建a标签实现
+let link = document.createElement('a')
+link.href = uri
+// 对下载的文件命名，可以用模板字符串拼接
+link.download = `文件名${this.name}.csv`
+document.body.appendChild(link)
+// 模拟点击
+link.click()
+
+```
