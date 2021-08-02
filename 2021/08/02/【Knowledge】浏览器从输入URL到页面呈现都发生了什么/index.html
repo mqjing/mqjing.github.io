@@ -1,0 +1,207 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="知识点：
+
+寻找ip
+构建http请求
+http响应
+构建DOM树
+构建CSSOM树
+构建渲染树
+layout回流
+painting重绘
+页面渲染
+
+
+
+1 寻找IP在浏览器中输入URL之后，浏览器需要先去寻找这个URL对应的IP地址。浏览器会先查看缓存中是否有相应的记录，查找缓存的顺序为：
+
+缓存"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【Knowledge】浏览器从输入URL到页面呈现都发生了什么 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><script>var _hmt = _hmt || [];
+(function() {
+var hm = document.createElement("script");
+hm.src = "https://hm.baidu.com/hm.js?a7182e86f64b2a49ecf081d084972da9";
+var s = document.getElementsByTagName("script")[0];
+s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-3QJB9NTHJQ"><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-3QJB9NTHJQ');</script></script><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><div class="black-overlay"><div class="loading-container"><span class="loading l-1"></span><span class="loading l-2"></span><span class="loading l-3"></span><span class="loading l-4"></span><span class="loading l-5"></span><span class="loading l-6"></span></div></div><article class="full"><h1>【Knowledge】浏览器从输入URL到页面呈现都发生了什么</h1><span class="post-meta">写于<time> 2021 年 08 月 02 日 21 时 55 分</time><br>更新于<time> 2021 年 08 月 02 日 23 时 05 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AF%BB%E6%89%BEIP"><span class="toc-number">1.</span> <span class="toc-text">1 寻找IP</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9E%84%E5%BB%BAhttp%E8%AF%B7%E6%B1%82"><span class="toc-number">2.</span> <span class="toc-text">2 构建http请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-http%E5%93%8D%E5%BA%94"><span class="toc-number">3.</span> <span class="toc-text">3 http响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%88%9B%E5%BB%BADOM%E6%A0%91"><span class="toc-number">4.</span> <span class="toc-text">4 创建DOM树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E5%88%9B%E5%BB%BACSSOM%E6%A0%91"><span class="toc-number">5.</span> <span class="toc-text">5 创建CSSOM树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%9E%84%E5%BB%BA%E6%B8%B2%E6%9F%93%E6%A0%91%EF%BC%88render%E6%A0%91%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">6 构建渲染树（render树）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-layout%E5%9B%9E%E6%B5%81%EF%BC%88reflow%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">7 layout回流（reflow）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-painting%E9%87%8D%E7%BB%98"><span class="toc-number">8.</span> <span class="toc-text">8 painting重绘</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E9%A1%B5%E9%9D%A2%E6%B8%B2%E6%9F%93"><span class="toc-number">9.</span> <span class="toc-text">9 页面渲染</span></a></li></ol></div><blockquote>
+<p><strong>知识点：</strong></p>
+<ol>
+<li>寻找ip</li>
+<li>构建http请求</li>
+<li>http响应</li>
+<li>构建DOM树</li>
+<li>构建CSSOM树</li>
+<li>构建渲染树</li>
+<li>layout回流</li>
+<li>painting重绘</li>
+<li>页面渲染</li>
+</ol>
+</blockquote>
+<p><a name="diDLQ"></a></p>
+<h2 id="1-寻找IP"><a href="#1-寻找IP" class="headerlink" title="1 寻找IP"></a>1 寻找IP</h2><p>在浏览器中输入URL之后，浏览器需要先去寻找这个URL对应的IP地址。浏览器会先查看缓存中是否有相应的记录，查找缓存的顺序为：</p>
+<ol>
+<li>缓存：浏览器缓存 &gt; 系统缓存 &gt; 路由器缓存</li>
+<li>查找hosts文件</li>
+<li>查询DNS服务器</li>
+</ol>
+<p>最终得到URL对应的IP地址。<br><a name="XVOjU"></a></p>
+<h2 id="2-构建http请求"><a href="#2-构建http请求" class="headerlink" title="2 构建http请求"></a>2 构建http请求</h2><p>浏览器根据刚刚找到的IP以及对应的端口号，构建一个http请求。<br />一个http请求报文由四个部分组成：<strong>请求行、请求头、空行、请求体。</strong><br />其中，<br />请求行：由<strong>请求方法（GET、POST等）、URL、和http协议版本</strong>组成，之间用空格隔开。<br />请求头：由关键字/值对组成，没对占一行，典型的请求头有：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">User-Agent：产生请求的浏览器类型</span><br><span class="line">Accept：客户端可识别的响应内容类型列表，星号“*”用户按范围将类型分组，“*<span class="comment">/*”表示可接收全部类型。</span></span><br><span class="line"><span class="comment">Accept-Language：客户端可接受的自然语言</span></span><br><span class="line"><span class="comment">Accept-Encoding：客户端可接受的编码压缩格式</span></span><br><span class="line"><span class="comment">Host：请求的主机名，允许多个域名同处一个IP地址，即虚拟主机</span></span><br><span class="line"><span class="comment">connection：连接方式（close 或 keepalive）</span></span><br><span class="line"><span class="comment">Cookie：存储于客户端扩展字段，向同一域名的服务端发送属于该域的cookie</span></span><br></pre></td></tr></table></figure>
+<p>空行：最后一个请求头之后是一个回车符和换行符，用来告诉服务器后面不再有请求头。<br />请求包体：此部分不再GET方法中使用，而是在例如POST方法中使用。与请求包体相关的最常使用的是包体类型<code>Content-type</code>和包体长度<code>Content-length</code>。<br /><strong>http请求构造好之后，会被封装在一个tcp包中。</strong><br><a name="SUiyJ"></a></p>
+<h2 id="3-http响应"><a href="#3-http响应" class="headerlink" title="3 http响应"></a>3 http响应</h2><p>封装好tcp包，会依次经过传输层、网络层、数据链路层、物理层，最后到达服务器，服务器对这个请求作出响应，返回响应的数据–<strong>http响应报文。</strong><br />一个http响应报文也由四个部分组成：<strong>状态行、响应头部、空行、响应包体。</strong><br />其中，<br />状态行：由<strong>http协议版本字段、状态码、状态码的描述</strong>组成，之间用空格隔开。<br />响应头部：<br />响应头部可能包括：<br />location：Location响应报头用于重定向接受者到一个新的位置。<br />vary：指示不可缓存的请求头列表。<br />connection：连接方式（对于请求来说close表示告诉服务器在完成本次请求的响应后断开连接；对于响应来说，close表示已经关闭）。<br />空行：作用同http请求报文<br />响应包体：服务器返回给客户端的文本信息。<br><a name="0fYTQ"></a></p>
+<h2 id="4-创建DOM树"><a href="#4-创建DOM树" class="headerlink" title="4 创建DOM树"></a>4 创建DOM树</h2><p>浏览器在对服务器返回的数据进行解析处理，首先处理的是html文档，因为html文档是一个树形结构，浏览器会根据这个html来创建DOM树，中途遇到js脚本和外部JS链接，则先下载和执行完对应的脚本再继续往下创建DOM树。<br /><br><br />在解析DOM的资源时，html的文字、图片、视频等资源会并行下载，浏览器对每个域的并行下载有数量限制，一般是4-6个。<br><a name="CeN4u"></a></p>
+<h2 id="5-创建CSSOM树"><a href="#5-创建CSSOM树" class="headerlink" title="5 创建CSSOM树"></a>5 创建CSSOM树</h2><p>CSSOM树和DOM树的创建方式一样，在DOM树创建完成后，加载内部样式和外部样式，内联样式来构建CSSOM树。<br><a name="u7VR4"></a></p>
+<h2 id="6-构建渲染树（render树）"><a href="#6-构建渲染树（render树）" class="headerlink" title="6 构建渲染树（render树）"></a>6 构建渲染树（render树）</h2><p>在DOM树和CSSOM树创建完成之后，把两者合并为渲染树。渲染树的主要作用是排除非视觉节点。比如设置了<code>display: none;</code>属性。<br /><br><br />构建完渲染树之后就是进行页面的绘制，主要包括回流和重绘。<br><a name="GqaFJ"></a></p>
+<h2 id="7-layout回流（reflow）"><a href="#7-layout回流（reflow）" class="headerlink" title="7 layout回流（reflow）"></a>7 layout回流（reflow）</h2><p>在第一次绘制页面的时候会进行一次最大规模的回流，根据上面的渲染树计算设备使用时确切的位置，在页面上进行布局，然后渲染页面。</p>
+<blockquote>
+<p><strong>什么是回流？</strong>当渲染树中的一部分（或全部）因为元素的<strong>规模、尺寸、布局、隐藏</strong>等改变而需要重新构建。这就称为回流。每个页面至少要经历一次回流，就是在页面第一次加载的时候。在回流的时候，浏览器会使渲染树中收到影响的部分失效，并重新构建这部分渲染树，完成回流后，浏览器会重新绘制受影响的部分到屏幕中，这个过程被称为<strong>重绘。</strong><br>**<br /></p>
+</blockquote>
+<blockquote>
+<p>产生回流的操作：</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>第一次渲染页面（内容和文字都发生改变）</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>浏览器窗口尺寸改变</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>页面元素位置和尺寸大小的改变</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>新增和删除元素</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5">
+<li>一些style属性发生变化导致元素变化：如边框、下划线、css伪类等</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>如何避免和减少回流和重绘：</p>
+</blockquote>
+<blockquote>
+<ol>
+<li>减少DOM和样式的修改，不多次修改样式</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>样式集中，尽量使用外部样式表和外部JS，读写分离，这样有利于服务器和浏览器缓存</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>能使用css的就不用js操作样式：（每次js操作都会导致重绘和回流）</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>页面中多次需要重排的元素，position使用absolute或fixed</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5">
+<li>尽量不使用表表格布局（无固定宽高的表格高由最后一行决定，绘制到最后一行不合理的时候会反复进行计算回流）</li>
+</ol>
+</blockquote>
+<p><a name="UpZQQ"></a></p>
+<h2 id="8-painting重绘"><a href="#8-painting重绘" class="headerlink" title="8 painting重绘"></a>8 painting重绘</h2><p>根据渲染树以及回流得到的几何信息，得到节点的绝对像素。<br><a name="TuVeY"></a></p>
+<h2 id="9-页面渲染"><a href="#9-页面渲染" class="headerlink" title="9 页面渲染"></a>9 页面渲染</h2><p>上述步骤都完成后，把像素发送给电脑的GPU，开始绘制页面。<br /></p>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2021/08/02/【Knowledge】浏览器从输入URL到页面呈现都发生了什么/";</script><script>var DISQUS_IDENTIFIER = "2021/08/02/【Knowledge】浏览器从输入URL到页面呈现都发生了什么/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section><section class="visit"><script async="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"></span>本站累计接客&nbsp;<a href="" id="busuanzi_value_site_uv"></a>&nbsp;位</section><section class="intro"><span id="busuanzi_container_site_pv"></span>累计访问&nbsp;<a href="" id="busuanzi_value_site_pv"></a>&nbsp;次</section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+  //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+  $("header").backstretch("/images/header.jpg");
+  //- 关于hightlight.js：https://highlightjs.org/
+  $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+  });
+  $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+  });
+  $("article.full img").each(function() {
+    if($(this).parent().is("article")) {
+      $(this).wrap("<p style='text-align: center;'></p>");
+    } else {
+      $(this).parent().css("text-align", "center");
+    }
+  });
+
+  if($(".article-toc").children().length < 2) {
+    $(".article-toc").css("display", "none");
+  };
+  //- 直接用了通用的音频格式，同时支持Safari和Chrome
+  const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+    mini: 'true',
+    loop: 'all',
+    theme: 'none',
+    volume: 0.3,
+    //- 可以加入多首歌
+    audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/summersea.m4a',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33jie.flac',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33miao.aac',
+        cover: '/images/svdb.png',
+      },
+    ]
+  }); 
+  //- 创建pjax对象
+  var pjax = new Pjax({
+    elements: "a",
+    selectors: [
+      "main",
+    ]
+  })
+  $(document).on('pjax:send', function() {
+    $('.black-overlay').show()
+  });
+  $(document).on('pjax:complete', function() {
+    //- console.log('加载完成')
+    $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+    });
+    $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+    $('.black-overlay').hide();
+  });
+});</script></body></html>
