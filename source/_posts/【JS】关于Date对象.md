@@ -1,5 +1,7 @@
 ---
 title: 【JS】关于Date对象
+date: 2021.07.17 16:27
+update: 
 ---
 
 关于Date对象的一些用法整理
