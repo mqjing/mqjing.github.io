@@ -1,0 +1,124 @@
+<!DOCTYPE html><html class="han-init" lang="zh-Hant"><head><meta name="author" content="Jing"><meta name="description" itemprop="description" content="本篇文章主要是参考的这位老哥的文章：浅谈 JS 防抖和节流。防抖和节流严格算起来应该属于性能优化的知识，但实际上遇到的频率相当高，处理不当或者放任不管就容易引起浏览器卡死。
+
+场景定义先说一个常见的功能，很多网站会提供这么一个按钮：用于返回顶部。
+这个按钮只会在滚动到距离顶部一定位置之后才出现，那么"><link rel="icon" href="/images/favicon.ico"><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title>【Knowledge】浏览器从输入URL到页面呈现都发生了什么 · 一个没那么正经的人</title><link rel="stylesheet" type="text/css" href="/font/fantasque_sans_mono/stylesheet.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/webicons/2.0.0/webicons.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/Han/3.3.0/han.min.css"><link rel="stylesheet" type="text/css" href="/styles/screen.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/highlight.js/9.9.0/styles/gruvbox-dark.min.css"><link rel="apple-touch-icon" size="144*144" href="/images/apple.png"><script>var _hmt = _hmt || [];
+(function() {
+var hm = document.createElement("script");
+hm.src = "https://hm.baidu.com/hm.js?a7182e86f64b2a49ecf081d084972da9";
+var s = document.getElementsByTagName("script")[0];
+s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-3QJB9NTHJQ"><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-3QJB9NTHJQ');</script></script><meta name="generator" content="Hexo 5.3.0"></head><body><header><div id="aplayer"></div><h1><a href="/" alt="故事的山楂树" title="故事的山楂树">故事的山楂树</a></h1><p>一个没那么正经的人</p><nav><ul><li><a href="/" alt="首页" title="首页">首页</a></li><li><a href="/pigeonhole" alt="归档" title="归档">归档</a></li><li><a href="/links" alt="链接" title="链接">链接</a></li><li><a href="/about" alt="关于" title="关于">关于</a></li></ul><div class="xnews-icon"><a target="_blank" href="https://github.com/mqjing" style="position: relative; top: -2px;">&#xe735;</a><a target="_blank" href="https://weibo.com/YOUR_WEIBO_ID" style="position: relative; top: -2px;">&#xe603;</a></div></nav><div class="space"></div></header><main><div class="black-overlay"><div class="loading-container"><span class="loading l-1"></span><span class="loading l-2"></span><span class="loading l-3"></span><span class="loading l-4"></span><span class="loading l-5"></span><span class="loading l-6"></span></div></div><article class="full"><h1>【Knowledge】浏览器从输入URL到页面呈现都发生了什么</h1><span class="post-meta">写于<time> 2021 年 08 月 03 日 18 时 55 分</time><br>更新于<time> 2021 年 09 月 05 日 11 时 02 分</time></span><div class="article-toc"><strong>大纲</strong><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">场景定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%B2%E6%8A%96%EF%BC%88debounce%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">防抖（debounce）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8A%82%E6%B5%81%EF%BC%88throttle%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">节流（throttle）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E4%B8%BE%E4%BE%8B"><span class="toc-number">4.</span> <span class="toc-text">其他应用场景举例</span></a></li></ol></div><p>本篇文章主要是参考的这位老哥的文章：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000018428170/">浅谈 JS 防抖和节流</a>。<br /><br><br />防抖和节流严格算起来应该属于性能优化的知识，但实际上遇到的频率相当高，处理不当或者放任不管就容易引起浏览器卡死。<br /></p>
+<p><a name="OzzNu"></a></p>
+<h2 id="场景定义"><a href="#场景定义" class="headerlink" title="场景定义"></a>场景定义</h2><p>先说一个常见的功能，很多网站会提供这么一个按钮：用于返回顶部。</p>
+<p>这个按钮只会在滚动到距离顶部一定位置之后才出现，那么我们现在抽象出这个功能需求 – <strong>监听浏览器滚动事件，返回当前滚条与顶部的距离。</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">showTop</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">let</span> scollTop = <span class="built_in">document</span>.body.scrollTop || <span class="built_in">document</span>.documentElement.scrollTop;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;滚动条位置：&#x27;</span>+scollTop)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.onscroll = showTop</span><br></pre></td></tr></table></figure>
+<p>】但是这段代码一旦运行你就会发现，这个函数执行的频率太高了，点击一次键盘上的向下按钮甚至就会执行8-9次。<br /></p>
+<p><a name="WeIGh"></a></p>
+<h2 id="防抖（debounce）"><a href="#防抖（debounce）" class="headerlink" title="防抖（debounce）"></a>防抖（debounce）</h2><p>针对上面的场景，首先提出第一种思路：<strong>在第一次触发函数的时候，不立即执行，而是给出一个延时，比如200ms，如果200ms内函数又被调用，则不执行函数且重新开始计时。</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">debounce</span>(<span class="params">fn, delay</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">let</span> timer = <span class="literal">null</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  	<span class="keyword">if</span> (timer) &#123;</span><br><span class="line">      <span class="built_in">clearTimeout</span>(timer)</span><br><span class="line">    &#125;</span><br><span class="line">    timer = <span class="built_in">setTimeout</span>(fn, delay)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后给出防抖的定义：<strong>对于短时间内连续触发的事件，防抖的作用就是限制其在给定的时间内只执行一次。</strong><br><a name="XddJJ"></a></p>
+<h2 id="节流（throttle）"><a href="#节流（throttle）" class="headerlink" title="节流（throttle）"></a>节流（throttle）</h2><p>继续思考，使用上面防抖的解决方案可能会导致一个问题：<br /></p>
+<blockquote>
+<p>如果有个用户闲着无聊，不停的滚动页面，导致一直在重新计时，但是产品又有个需求是即使用户不断滚动页面，也会在某个时间间隔之后给出反馈。（虽然这个需求我看起来相当的不合理，仅用来讨论问题）</p>
+</blockquote>
+<p><br />实现方案可以是这样：<strong>借助</strong><code>setTimeout</code>，加入一个<code>valid</code>位来表示是否是工作状态，如果不是工作状态，直接返回；反之，就设置一个<code>setTimeout</code>并且将<code>valid</code>设置为非工作状态。<br /><br><br />代码实现可以如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">fn, delay</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">let</span> valid = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 休息时间，直接返回</span></span><br><span class="line">  	<span class="keyword">if</span> (!valid) <span class="keyword">return</span></span><br><span class="line">    <span class="comment">// 工作时间，执行函数，并在间隔期内把状态位设为无效。**注意在执行完之后要将状态改为工作**</span></span><br><span class="line">    valid = <span class="literal">false</span></span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">    	fn()</span><br><span class="line">      valid = <span class="literal">true</span></span><br><span class="line">    &#125;, delay)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><a name="z0HBc"></a></p>
+<h2 id="其他应用场景举例"><a href="#其他应用场景举例" class="headerlink" title="其他应用场景举例"></a>其他应用场景举例</h2><p>平时开发中常遇到的情形</p>
+<ol>
+<li>搜索框input事件，例如要支持实时搜索，这时候可以使用节流方案（间隔一段时间就必须查询相关内容），或者实现输入间隔大于某个值（如500ms），就当作用户输入完成，然后开始搜索。</li>
+<li>页面resize事件，常见于需要做页面适配的时候。需要根据最终呈现的页面进行dom渲染。（这个情形一般是使用防抖，因为只需要判断最后一次变化的情况。）</li>
+</ol>
+<hr><section class="comment"><div id="disqus_thread"></div></section><script>var DISQUS_PAGE_URL = "http://example.com/2021/08/03/【JS】关于防抖和节流/";</script><script>var DISQUS_IDENTIFIER = "2021/08/03/【JS】关于防抖和节流/";</script><script>var DISQUS_SHORT_NAME = "mqjing"</script><script>var disqus_config = function() {
+  this.page.url = DISQUS_PAGE_URL;
+  this.page.identifier = DISQUS_IDENTIFIER;
+};
+
+(function() {
+  var d = document, s = d.createElement("script");
+  s.src = "https://" + DISQUS_SHORT_NAME + ".disqus.com/embed.js";
+  s.setAttribute("data-timestamp", +new Date());
+  (d.head || d.body).appendChild(s);
+})();</script><noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript><footer><section class="copyright">&copy; 2021 - 2021&middot;<a href="/">Jing</a></section><section class="intro">由<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>驱动&middot;挂载<a target="_blank" rel="noopener" href="https://github.com/xadillax/hexo-xnew">X'new</a>主题&middot;参(chao)考(xi)<a target="_blank" rel="noopener" href="https://xcoder.in">死月</a></section><section class="visit"><script async="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span id="busuanzi_container_site_uv"></span>本站累计接客&nbsp;<a href="" id="busuanzi_value_site_uv"></a>&nbsp;位</section><section class="intro"><span id="busuanzi_container_site_pv"></span>累计访问&nbsp;<a href="" id="busuanzi_value_site_pv"></a>&nbsp;次</section></footer></article></main><script src="//cdn.bootcss.com/Han/3.3.0/han.min.js"></script><script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script><script src="//cdn.bootcss.com/jquery-backstretch/2.0.4/jquery.backstretch.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aplayer/1.10.1/APlayer.min.css"><script src="/scripts/highlight.pack.js"></script><script>$(function() {
+  //- 关于backstretch：https://github.com/jquery-backstretch/jquery-backstretch
+  $("header").backstretch("/images/header.jpg");
+  //- 关于hightlight.js：https://highlightjs.org/
+  $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+  });
+  $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+  });
+  $("article.full img").each(function() {
+    if($(this).parent().is("article")) {
+      $(this).wrap("<p style='text-align: center;'></p>");
+    } else {
+      $(this).parent().css("text-align", "center");
+    }
+  });
+
+  if($(".article-toc").children().length < 2) {
+    $(".article-toc").css("display", "none");
+  };
+  //- 直接用了通用的音频格式，同时支持Safari和Chrome
+  const ap = new APlayer({
+    container: document.getElementById('aplayer'),
+    mini: 'true',
+    loop: 'all',
+    theme: 'none',
+    volume: 0.3,
+    //- 可以加入多首歌
+    audio: [
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/summersea.m4a',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33jie.flac',
+        cover: '/images/svdb.png',
+      },
+      {
+        name: 'name',
+        artist: 'artist',
+        url: 'https://www.oookini.com/assets/33miao.aac',
+        cover: '/images/svdb.png',
+      },
+    ]
+  }); 
+  //- 创建pjax对象
+  var pjax = new Pjax({
+    elements: "a",
+    selectors: [
+      "main",
+    ]
+  })
+  $(document).on('pjax:send', function() {
+    $('.black-overlay').show()
+  });
+  $(document).on('pjax:complete', function() {
+    //- console.log('加载完成')
+    $("figure.highlight").each(function(i, block) {
+      $(block).removeClass("highlight");
+      $(block).find("td.gutter").remove();
+      $("<pre><code class='__tobehl " + ($(block).attr("class") === "plain" ? "" : ("lang-" + $(block).attr("class"))) + "'></code></pre>").insertAfter($(block));
+      $(block).next().find("code").text((block.innerText || block.textContent));
+      $(block).remove();
+    });
+    $(".__tobehl").each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+    $('.black-overlay').hide();
+  });
+});</script></body></html>
