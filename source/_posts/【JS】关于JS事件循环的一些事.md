@@ -3,6 +3,11 @@ title: 【JS】关于JS事件循环的一些事
 date: 2020-10-25 20:36
 ---
 
+---
+2021.10.03 更新，看了一篇关于 Event Loop 的文章，讲的很不错，对比了浏览器的 Event Loop 和 node.js 的 Event Loop，
+[彻底理解 Event Loop](https://www.cnblogs.com/dennisj/p/12550996.html)
+---
+
 事情是这样的，看到一个关于事件循环的题,这道题的主要考察点是事件循环中函数执行顺序的问题，其中包括`async`、`await`、`setTimeout`、`promise`函数。(答案请见：[解题步骤](#回到本题))
 <!-- more -->
 ```javascript
