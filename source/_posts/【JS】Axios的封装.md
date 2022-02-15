@@ -1,6 +1,7 @@
 ---
 title: 【JS】Axios的封装
 date: 2021-08-27 21:33
+description: 一般项目中我们会在项目的 `src` 目录中新建一个 `request` 文件夹，里边放一个 `http.js` 和 `api.js` 文件，`http.js` 用来封装 `axios` ，`api.js` 用来统一管理 api 接口...
 ---
 
 一般项目中我们会在项目的 `src` 目录中新建一个 `request` 文件夹，里边放一个 `http.js` 和 `api.js` 文件，`http.js` 用来封装 `axios` ，`api.js` 用来统一管理 api 接口。
